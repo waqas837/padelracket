@@ -106,7 +106,7 @@ export default function RacketDetail({ params }) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
         {/* Image Section */}
-        <div className="bg-white rounded-lg shadow-md p-6 flex items-center justify-center">
+        <div className="bg-white shadow-md p-6 flex items-center justify-center">
           <div className="relative w-full h-96">
             <img
               src={racket.img}
@@ -150,7 +150,7 @@ export default function RacketDetail({ params }) {
           <p className="text-gray-700 mb-6">{racket.description}</p>
 
           {/* Specifications Card */}
-          <div className="bg-gray-50 rounded-lg p-4 mb-6">
+          <div className="bg-gray-50 p-4 mb-6">
             <h3 className="font-semibold text-gray-800 mb-3">Specifications</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -194,18 +194,18 @@ export default function RacketDetail({ params }) {
 
           {/* Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 mb-6">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-medium flex-1 transition-colors">
-              Add to Cart
+            <button className="bg-yellow-600 hover:bg-yellow-700 text-white py-3 px-6 font-medium flex-1 transition-colors">
+             Buy It From Amazon
             </button>
-            <button className="border border-gray-300 hover:border-gray-400 text-gray-700 py-3 px-6 rounded-lg font-medium flex-1 transition-colors">
+            {/* <button className="border border-gray-300 hover:border-gray-400 text-gray-700 py-3 px-6 font-medium flex-1 transition-colors">
               Add to Wishlist
-            </button>
+            </button> */}
           </div>
         </div>
       </div>
 
       {/* Performance Metrics Section */}
-      <div className="mt-12 bg-white rounded-lg shadow-md p-6">
+      <div className="mt-12 bg-white shadow-md p-6">
         <h2 className="text-2xl font-bold text-gray-800 mb-6">
           Performance Metrics
         </h2>
@@ -214,12 +214,12 @@ export default function RacketDetail({ params }) {
             <div key={key} className="flex flex-col items-center">
               <div className="relative w-full h-4 bg-gray-200 rounded-full overflow-hidden mb-2">
                 <div
-                  className="absolute top-0 left-0 h-full bg-blue-600 rounded-full"
+                  className="absolute top-0 left-0 h-full bg-gray-600 rounded-full"
                   style={{ width: `${value}%` }}
                 ></div>
               </div>
               <div className="flex items-baseline gap-1">
-                <span className="font-bold text-blue-600">{value}</span>
+                <span className="font-bold text-gray-600">{value}</span>
                 <span className="text-sm text-gray-600">/100</span>
               </div>
               <p className="text-center text-gray-700 capitalize mt-1">
@@ -231,7 +231,7 @@ export default function RacketDetail({ params }) {
       </div>
 
       {/* Features Section */}
-      <div className="mt-12 bg-white rounded-lg shadow-md p-6">
+      <div className="mt-12 bg-white shadow-md p-6">
         <h2 className="text-2xl font-bold text-gray-800 mb-6">Key Features</h2>
         <ul className="space-y-3">
           {racket.features.map((feature, index) => (
@@ -253,9 +253,9 @@ export default function RacketDetail({ params }) {
             .filter((r) => r.id !== racket.id)
             .map((relatedRacket) => (
               <Link
-                href={`/rackets/${relatedRacket.id}`}
+                href={`/collections/rackets/${relatedRacket.id}`}
                 key={relatedRacket.id}
-                className="bg-white shadow-md rounded-lg p-4 text-center transition-transform transform hover:scale-105"
+                className="bg-white shadow-md p-4 text-center transition-transform transform hover:scale-105"
               >
                 <img
                   src={relatedRacket.img}

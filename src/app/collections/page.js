@@ -181,17 +181,17 @@ export default function CollectionsPage() {
       </div>
 
       {/* New Arrivals Highlight */}
-      <div className="mb-16">
-        <div className="flex items-center justify-between mb-6">
+      {/* <div className="mb-16"> */}
+        {/* <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold">New Arrivals</h2>
           <Link href="/products/new" className="text-blue-600 hover:underline">
             View all →
           </Link>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        </div> */}
+        {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-4"> */}
           {/* Example new products - in a real app these would be dynamic */}
-          {[1, 2, 3, 4].map((i) => (
-            <Link
+          {/* {[1, 2, 3, 4].map((i) => ( */}
+            {/* <Link
               href={`/products/new-arrival-${i}`}
               key={i}
               className="bg-white shadow-md rounded-lg p-3 text-center transition-transform transform hover:scale-105"
@@ -210,10 +210,10 @@ export default function CollectionsPage() {
                 New Product {i}
               </h3>
               <p className="text-gray-600 font-bold mt-1">${99 + i * 10}</p>
-            </Link>
-          ))}
-        </div>
-      </div>
+            </Link> */}
+          { /* ))} */}
+        {/* </div> */}
+      {/* </div> */}
 
       {/* Brands Section */}
       <div className="mt-16">

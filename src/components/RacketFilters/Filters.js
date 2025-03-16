@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 const sortOptions = [
@@ -279,6 +280,14 @@ const ClientFilters = ({ rackets, filterOptions }) => {
                   <p className="text-gray-500">For: {racket.forWhom}</p>
                   <p className="text-gray-500">Face: {racket.face}</p>
                 </div>
+                <Link
+                  href={`/collections/rackets/${racket.name
+                    .toLowerCase()
+                    .replace(/\s+/g, "-")}`}
+                  className="w-full block py-2 bg-black text-white font-semibold hover:bg-gray-800 transition-colors my-2 mt-4"
+                >
+                  View Details
+                </Link>
               </div>
             ))
           ) : (

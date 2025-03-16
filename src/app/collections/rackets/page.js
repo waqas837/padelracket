@@ -68,6 +68,9 @@ const RacketList = () => {
           Collections
         </Link>
         <span className="mx-2">/</span>
+        <Link href="/collections/rackets" className="hover:text-black">
+          Rackets
+        </Link>
       </div>
 
       {/* Pass the rackets and filter options to the client component */}

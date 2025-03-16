@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 const rackets = [
@@ -40,13 +41,18 @@ const RacketLatestList = () => {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 justify-center">
         {rackets.map((racket, index) => (
-          <div
+          <Link
             key={index}
-            className="bg-white shadow-md rounded-lg p-4 text-center transition-transform transform hover:scale-105"
+            href={`/collections/rackets/${racket.name
+              .toLowerCase()
+              .replace(/ /g, "-")}`}
+            className="bg-white shadow-md rounded-lg p-4 text-center transition-transform transform hover:scale-105 block"
           >
-            <img
+            <Image
               src={racket.img}
               alt={racket.name}
+              width={200}
+              height={200}
               className="w-full h-32 object-contain mx-auto"
             />
             <h3 className="text-lg font-semibold mt-3">{racket.name}</h3>
@@ -66,24 +72,21 @@ const RacketLatestList = () => {
                 </span>
               ))}
             </div>
-          </div>
+          </Link>
         ))}
       </div>
 
       {/* Show All Button */}
       <div className="text-center mt-10">
-        {/* Show All Button */}
-        <div className="mt-10">
-          <Link
-            href="/collections/rackets"
-            className="border border-black text-black px-6 py-2 shadow-md inline-flex items-center justify-center gap-2 transition-all duration-300 group hover:gap-4"
-          >
-            Show All
-            <span className="transition-transform duration-300 transform translate-x-0 group-hover:translate-x-1">
-              →
-            </span>
-          </Link>
-        </div>
+        <Link
+          href="/collections/rackets"
+          className="border border-black text-black px-6 py-2 shadow-md inline-flex items-center justify-center gap-2 transition-all duration-300 group hover:gap-4 hover:bg-black hover:text-white"
+        >
+          Show All
+          <span className="transition-transform duration-300 transform translate-x-0 group-hover:translate-x-1">
+            →
+          </span>
+        </Link>
       </div>
     </section>
   );
