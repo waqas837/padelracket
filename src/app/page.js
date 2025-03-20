@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import BlogBuyerGuide from "@/components/BuyersGuide/BuyerGuide";
 import Newsletter from "@/components/Newsletter/page";
 import RacketLatestList from "@/components/RacketLatestList";

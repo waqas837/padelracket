@@ -1,7 +1,8 @@
 "use client";
-
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { mywebsiteurl } from "@/lib/myurl";
 
 const sortOptions = [
   "Featured",
@@ -10,7 +11,15 @@ const sortOptions = [
   "Rating: High to Low",
 ];
 
-const ClientFilters = ({ rackets, filterOptions }) => {
+// Hardcoded filter options
+const hardcodedFilterOptions = {
+  brands: ["Brand A", "Brand B", "Brand C"],
+  levels: ["Beginner", "Intermediate", "Advanced"],
+  shapes: ["Teardrop", "Round", "Hybrid"],
+};
+
+const ClientFilters = () => {
+  const [rackets, setRackets] = useState([]);
   const [selectedSort, setSelectedSort] = useState("Featured");
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState({
@@ -22,6 +31,21 @@ const ClientFilters = ({ rackets, filterOptions }) => {
     forWhom: "",
     face: "",
   });
+
+  // Fetch rackets from API (only rackets, since filter options are hardcoded)
+  useEffect(() => {
+    const fetchRackets = async () => {
+      try {
+        const { data } = await axios.get("/api/rackets");
+        // console.log("data>>>>>>", data);
+        setRackets(data.response);
+      } catch (error) {
+        console.error("Error fetching rackets:", error);
+      }
+    };
+
+    fetchRackets();
+  }, []);
 
   // Apply filters
   let filteredRackets = rackets.filter((racket) => {
@@ -74,7 +98,7 @@ const ClientFilters = ({ rackets, filterOptions }) => {
             value={filters.brand}
           >
             <option value="">All</option>
-            {filterOptions.brands.map((brand) => (
+            {hardcodedFilterOptions.brands.map((brand) => (
               <option key={brand} value={brand}>
                 {brand}
               </option>
@@ -91,7 +115,7 @@ const ClientFilters = ({ rackets, filterOptions }) => {
             value={filters.level}
           >
             <option value="">All</option>
-            {filterOptions.levels.map((level) => (
+            {hardcodedFilterOptions.levels.map((level) => (
               <option key={level} value={level}>
                 {level}
               </option>
@@ -108,7 +132,7 @@ const ClientFilters = ({ rackets, filterOptions }) => {
             value={filters.shape}
           >
             <option value="">All</option>
-            {filterOptions.shapes.map((shape) => (
+            {hardcodedFilterOptions.shapes.map((shape) => (
               <option key={shape} value={shape}>
                 {shape}
               </option>
@@ -206,18 +230,18 @@ const ClientFilters = ({ rackets, filterOptions }) => {
                 className="bg-white shadow-md  p-4 text-center transition-transform transform hover:scale-105"
               >
                 <img
-                  src={racket.img}
-                  alt={racket.name}
+                  src={`${mywebsiteurl}${racket.filePath}`}
+                  alt={racket.title}
                   className="w-full h-32 object-contain mx-auto"
                 />
-                <h3 className="text-lg font-semibold mt-3">{racket.name}</h3>
+                <h3 className="text-lg font-semibold mt-3">{racket.title}</h3>
                 <p className="text-gray-600 font-bold">${racket.price}</p>
                 <div className="flex justify-center items-center mt-2 mb-2">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <span
                       key={i}
                       className={`text-yellow-400 text-xl ${
-                        i < Math.round(racket.rating)
+                        i < Math.round(racket.ratings)
                           ? "opacity-100"
                           : "opacity-30"
                       }`}
@@ -237,35 +261,35 @@ const ClientFilters = ({ rackets, filterOptions }) => {
                       <span className="font-bold text-gray-500">PWR</span>
                       <span className="text-gray-700">Power</span>
                       <span className="ml-auto font-bold text-blue-600">
-                        {racket.metrics?.power || "-"}
+                        {racket.power || "-"}
                       </span>
                     </div>
                     <div className="flex items-center gap-1">
                       <span className="font-bold text-gray-500">CTL</span>
                       <span className="text-gray-700">Control</span>
                       <span className="ml-auto font-bold text-blue-600">
-                        {racket.metrics?.control || "-"}
+                        {racket.control || "-"}
                       </span>
                     </div>
                     <div className="flex items-center gap-1">
                       <span className="font-bold text-gray-500">RBD</span>
                       <span className="text-gray-700">Rebound</span>
                       <span className="ml-auto font-bold text-blue-600">
-                        {racket.metrics?.rebound || "-"}
+                        {racket.rebound || "-"}
                       </span>
                     </div>
                     <div className="flex items-center gap-1">
                       <span className="font-bold text-gray-500">MAN</span>
                       <span className="text-gray-700">Maneuv.</span>
                       <span className="ml-auto font-bold text-blue-600">
-                        {racket.metrics?.maneuverability || "-"}
+                        {racket.maneuverability || "-"}
                       </span>
                     </div>
                     <div className="flex items-center gap-1 col-span-2">
                       <span className="font-bold text-gray-500">SS</span>
                       <span className="text-gray-700">Sweet spot</span>
                       <span className="ml-auto font-bold text-blue-600">
-                        {racket.metrics?.sweetSpot || "-"}
+                        {racket.sweetSpot || "-"}
                       </span>
                     </div>
                   </div>
@@ -273,17 +297,15 @@ const ClientFilters = ({ rackets, filterOptions }) => {
 
                 {/* Specifications */}
                 <div className="grid grid-cols-2 gap-1 text-xs mt-3">
-                  <p className="text-gray-500">Year: {racket.year}</p>
-                  <p className="text-gray-500">Level: {racket.level}</p>
-                  <p className="text-gray-500">Shape: {racket.shape}</p>
-                  <p className="text-gray-500">Type: {racket.type}</p>
-                  <p className="text-gray-500">For: {racket.forWhom}</p>
-                  <p className="text-gray-500">Face: {racket.face}</p>
+                  <p className="text-gray-500">Year: {racket.Year}</p>
+                  <p className="text-gray-500">Level: {racket.Level}</p>
+                  <p className="text-gray-500">Shape: {racket.Shape}</p>
+                  <p className="text-gray-500">Type: {racket.Type}</p>
+                  <p className="text-gray-500">For: {racket.forGender}</p>
+                  <p className="text-gray-500">Face: {racket.Face}</p>
                 </div>
                 <Link
-                  href={`/collections/rackets/${racket.name
-                    .toLowerCase()
-                    .replace(/\s+/g, "-")}`}
+                  href={`/collections/rackets/${racket.slug}`}
                   className="w-full block py-2 bg-black text-white font-semibold hover:bg-gray-800 transition-colors my-2 mt-4"
                 >
                   View Details

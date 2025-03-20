@@ -23,7 +23,7 @@ export default function ShopByCategory() {
             href={category.href}
             className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg block"
           >
-            <Image
+            <img
               src={category.image}
               alt={category.name}
               width={300}

@@ -4,8 +4,10 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "webcamtest.live",
+        // protocol: "https",
+        // hostname: "padelracket.site",
+        protocol: "http",
+        hostname: "localhost",
       },
     ],
   },

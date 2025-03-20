@@ -13,7 +13,7 @@ const pool = mysql.createPool({
 
 // seed database
 const seedDatabase = async () => {
-  console.log("seedDatabase starting...")
+  console.log("seedDatabase starting...");
   let connection = await pool.getConnection();
   try {
     // 1. Create posts table if not exists
@@ -21,26 +21,42 @@ const seedDatabase = async () => {
       CREATE TABLE IF NOT EXISTS posts (
         slug VARCHAR(255) PRIMARY KEY,
         id VARCHAR(255),
+        metaTitle VARCHAR(255),
+        metaDescription TEXT,
         title TEXT,
-        filePath TEXT,
-        content TEXT,
-        date_created_in DATETIME,
-        description TEXT,
         keywords TEXT,
+        filePath TEXT,
         author TEXT,
-        canonicalUrl TEXT,
-        metaRobots TEXT,
-        ogTitle TEXT,
-        ogDescription TEXT,
-        ogImage TEXT,
-        twitterTitle TEXT,
-        twitterDescription TEXT,
-        twitterImage TEXT,
-        structuredData TEXT,
-        readTime VARCHAR(255)
+        KeyFeatures TEXT,
+        readTime VARCHAR(255),
+
+       
+        ratings VARCHAR(50),
+        price VARCHAR(50),
+        productDescription TEXT,
+
+     
+        Year VARCHAR(50),
+        Level VARCHAR(50),
+        Shape VARCHAR(50),
+        Type VARCHAR(50),
+        forGender VARCHAR(50),
+        Face VARCHAR(50),
+        Weight VARCHAR(50),
+        FrameThickness VARCHAR(50),
+        Balance VARCHAR(50),
+
+       
+        power VARCHAR(50),
+        control VARCHAR(50),
+        rebound VARCHAR(50),
+        maneuverability VARCHAR(50),
+        SweetSpot VARCHAR(50),
+        amazonLink TEXT,
+        date_created_in DATETIME DEFAULT CURRENT_TIMESTAMP
       );
-      
     `);
+
     // 2. Create seo_settings table if not exists
     await connection.query(`
       CREATE TABLE IF NOT EXISTS seo_settings (
@@ -60,11 +76,12 @@ const seedDatabase = async () => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
-    console.log("seed my database")
+
+    console.log("Database seeded successfully!");
   } catch (err) {
     console.error("Error connecting:", err);
   } finally {
-    connection.release();
+    if (connection) connection.release();
   }
 };
 

@@ -1,80 +1,41 @@
-import Image from "next/image";
+import pool from "@/lib/db";
 import Link from "next/link";
+import LatestPaddleRacketHome from "./Cards/LatestPaddleRacketHome";
 
-const rackets = [
-  {
-    name: "Adidas Metalbone",
-    img: "/rackets/adidas-metalbone.png",
-    price: "$299",
-    rating: 4.8,
-    year: 2024,
-  },
-  {
-    name: "Babolat Viper",
-    img: "/rackets/babolat-viper.png",
-    price: "$249",
-    rating: 4.6,
-    year: 2023,
-  },
-  {
-    name: "Wilson Bela Pro",
-    img: "/rackets/wilson-bela-pro.png",
-    price: "$279",
-    rating: 4.9,
-    year: 2024,
-  },
-  {
-    name: "Head Delta Pro",
-    img: "/rackets/head-delta-pro.png",
-    price: "$259",
-    rating: 4.7,
-    year: 2023,
-  },
-];
+// Fetch the latest rackets from the database
+const getLatestRackets = async () => {
+  let connection = await pool.getConnection();
+  try {
+    // Disable caching for this query
+    await connection.query("SET SESSION query_cache_type = OFF;");
 
-const RacketLatestList = () => {
+    // Fetch the latest rackets
+    let [results] = await connection.query(
+      "SELECT * FROM posts ORDER BY date_created_in DESC LIMIT 10;"
+    );
+
+    // console.log("Fetched rackets:", results); // Log the fetched data
+
+    if (results.length > 0) {
+      return results;
+    } else {
+      return undefined;
+    }
+  } catch (error) {
+    console.error("Error fetching rackets:", error);
+    return undefined;
+  } finally {
+    if (connection) connection.release(); // Ensure the connection is released
+  }
+};
+
+const RacketLatestList = async () => {
+  const rackets = await getLatestRackets(); // Fetch data dynamically
+
   return (
     <section className="my-32 px-6">
-      <h2 className="text-center text-3xl font-bold text-gray-800 mb-10">
-        Latest Padel Rackets
-      </h2>
-
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 justify-center">
-        {rackets.map((racket, index) => (
-          <Link
-            key={index}
-            href={`/collections/rackets/${racket.name
-              .toLowerCase()
-              .replace(/ /g, "-")}`}
-            className="bg-white shadow-md rounded-lg p-4 text-center transition-transform transform hover:scale-105 block"
-          >
-            <Image
-              src={racket.img}
-              alt={racket.name}
-              width={200}
-              height={200}
-              className="w-full h-32 object-contain mx-auto"
-            />
-            <h3 className="text-lg font-semibold mt-3">{racket.name}</h3>
-            <p className="text-gray-600">{racket.price}</p>
-            <p className="text-gray-500 text-sm">Year: {racket.year}</p>
-
-            {/* Rating Stars */}
-            <div className="flex justify-center items-center mt-2">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <span
-                  key={i}
-                  className={`text-yellow-400 text-xl ${
-                    i < Math.round(racket.rating) ? "opacity-100" : "opacity-30"
-                  }`}
-                >
-                  ★
-                </span>
-              ))}
-            </div>
-          </Link>
-        ))}
-      </div>
+      {/* Latest paddle rackets section */}
+      <LatestPaddleRacketHome rackets={rackets} />
 
       {/* Show All Button */}
       <div className="text-center mt-10">

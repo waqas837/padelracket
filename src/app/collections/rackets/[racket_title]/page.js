@@ -1,85 +1,56 @@
-// app/rackets/[id]/page.jsx
+export const dynamic = "force-dynamic";
+import pool from "@/lib/db";
+import { mywebsiteurl } from "@/lib/myurl";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-// This would typically come from a database - using the same mock data
-const rackets = [
-  {
-    id: "adidas-metalbone",
-    name: "Adidas Metalbone",
-    img: "/rackets/adidas-metalbone.png",
-    price: 299,
-    rating: 4.8,
-    year: 2024,
-    brand: "Adidas",
-    level: "Pro",
-    shape: "Diamond",
-    type: "Power",
-    forWhom: "Men",
-    balance: "High",
-    face: "Carbon",
-    weight: "375g",
-    frameThickness: "38mm",
-    description:
-      "The Adidas Metalbone is a premium racket designed for professional players who demand power and precision. The diamond shape provides an expanded sweet spot in the upper part of the racket, making it ideal for offensive play.",
-    features: [
-      "Carbon fiber frame for maximum strength and minimum weight",
-      "Dual Exoskeleton structure for improved stability",
-      "Anti-vibration system reduces arm fatigue",
-      "Power-focused design with excellent control",
-      "Optimized weight distribution for faster swing speeds",
-    ],
-    metrics: {
-      power: 87,
-      control: 83,
-      rebound: 90,
-      maneuverability: 75,
-      sweetSpot: 91,
-    },
-  },
-  {
-    id: "babolat-viper",
-    name: "Babolat Viper",
-    img: "/rackets/babolat-viper.png",
-    price: 249,
-    rating: 4.6,
-    year: 2023,
-    brand: "Babolat",
-    level: "Advanced",
-    shape: "Teardrop",
-    type: "Versatile",
-    forWhom: "Women",
-    balance: "Medium",
-    face: "Fiberglass",
-    weight: "355g",
-    frameThickness: "35mm",
-    description:
-      "The Babolat Viper is a versatile racket offering an excellent balance between power and control. Its teardrop shape provides a generous sweet spot, making it ideal for players looking to improve their game.",
-    features: [
-      "Fiberglass construction for better feel and flexibility",
-      "Advanced X-EVA material absorbs vibration",
-      "Medium balance for all-around performance",
-      "Precision string pattern for enhanced spin potential",
-      "Reinforced frame for durability",
-    ],
-    metrics: {
-      power: 82,
-      control: 100,
-      rebound: 75,
-      maneuverability: 86,
-      sweetSpot: 88,
-    },
-  },
-];
+// getRacketBySlug single racket
+const getRacketBySlug = async (racket_title) => {
+  let connection = await pool.getConnection();
+  try {
+    let [results] = await connection.query("SELECT * FROM posts Where slug=?", [
+      racket_title,
+    ]);
 
-// Get racket by ID (in a real app, this would query a database)
-const getRacketById = (id) => {
-  return rackets.find((racket) => racket.id === id);
+    if (results.length > 0) {
+      return results[0];
+    } else {
+      return undefined;
+    }
+  } catch (error) {
+  } finally {
+    if (connection) connection.release(); // Ensure the connection is released
+  }
 };
 
-export default function RacketDetail({ params }) {
-  const racket = getRacketById(params.racket_title);
+export default async function RacketDetail({ params }) {
+  const racket = await getRacketBySlug(params.racket_title);
+  const requiredFields = [
+    "power",
+    "control",
+    "rebound",
+    "maneuverability",
+    "sweetSpot",
+  ];
 
+  // This would typically come from a database - using the same mock data
+  const rackets = async () => {
+    let connection = await pool.getConnection();
+    try {
+      let [results] = await connection.query("SELECT * FROM posts LIMIT 4");
+
+      if (results.length > 0) {
+        return results;
+      } else {
+        return undefined;
+      }
+    } catch (error) {
+    } finally {
+      if (connection) connection.release(); // Ensure the connection is released
+    }
+  };
+  let relatedRacket = await rackets();
   // If racket not found, show 404 page
   if (!racket) {
     notFound();
@@ -109,8 +80,8 @@ export default function RacketDetail({ params }) {
         <div className="bg-white shadow-md p-6 flex items-center justify-center">
           <div className="relative w-full h-96">
             <img
-              src={racket.img}
-              alt={racket.name}
+              src={`${mywebsiteurl}${racket.filePath}`}
+              alt={racket.title}
               className="object-contain w-full h-full"
             />
           </div>
@@ -118,25 +89,27 @@ export default function RacketDetail({ params }) {
 
         {/* Details Section */}
         <div className="flex flex-col">
-          <h1 className="text-3xl font-bold text-gray-800">{racket.name}</h1>
+          <h1 className="text-3xl font-bold text-gray-800">{racket.title}</h1>
 
           {/* Brand and Rating */}
           <div className="flex items-center mt-2 mb-4">
             <span className="text-gray-600 font-medium">{racket.brand}</span>
-            <span className="mx-2">•</span>
+            <span className="mx-2">Ratings•</span>
             <div className="flex items-center">
               {Array.from({ length: 5 }).map((_, i) => (
                 <span
                   key={i}
                   className={`text-yellow-400 text-sm ${
-                    i < Math.round(racket.rating) ? "opacity-100" : "opacity-30"
+                    i < Math.round(racket.ratings)
+                      ? "opacity-100"
+                      : "opacity-30"
                   }`}
                 >
                   ★
                 </span>
               ))}
               <span className="ml-1 text-sm text-gray-600">
-                ({racket.rating})
+                ({racket.ratings})
               </span>
             </div>
           </div>
@@ -155,48 +128,52 @@ export default function RacketDetail({ params }) {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-sm text-gray-500">Year</p>
-                <p className="font-medium">{racket.year}</p>
+                <p className="font-medium">{racket.Year}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Level</p>
-                <p className="font-medium">{racket.level}</p>
+                <p className="font-medium">{racket.Level}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Shape</p>
-                <p className="font-medium">{racket.shape}</p>
+                <p className="font-medium">{racket.Shape}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Type</p>
-                <p className="font-medium">{racket.type}</p>
+                <p className="font-medium">{racket.Type}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">For</p>
-                <p className="font-medium">{racket.forWhom}</p>
+                <p className="font-medium">{racket.forGender}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Face</p>
-                <p className="font-medium">{racket.face}</p>
+                <p className="font-medium">{racket.Face}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Weight</p>
-                <p className="font-medium">{racket.weight}</p>
+                <p className="font-medium">{racket.Weight}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Frame Thickness</p>
-                <p className="font-medium">{racket.frameThickness}</p>
+                <p className="font-medium">{racket.FrameThickness}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Balance</p>
-                <p className="font-medium">{racket.balance}</p>
+                <p className="font-medium">{racket.Balance}</p>
               </div>
             </div>
           </div>
 
           {/* Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 mb-6">
-            <button className="bg-yellow-600 hover:bg-yellow-700 text-white py-3 px-6 font-medium flex-1 transition-colors">
-             Buy It From Amazon
-            </button>
+            <Link
+              href={racket.amazonLink}
+              target="_blank"
+              className="bg-yellow-600 hover:bg-yellow-700 text-white py-3 px-6 font-medium flex-1 transition-colors text-center"
+            >
+              Buy It From Amazon
+            </Link>
             {/* <button className="border border-gray-300 hover:border-gray-400 text-gray-700 py-3 px-6 font-medium flex-1 transition-colors">
               Add to Wishlist
             </button> */}
@@ -205,42 +182,42 @@ export default function RacketDetail({ params }) {
       </div>
 
       {/* Performance Metrics Section */}
+      {/* Performance Metrics Section */}
       <div className="mt-12 bg-white shadow-md p-6">
         <h2 className="text-2xl font-bold text-gray-800 mb-6">
           Performance Metrics
         </h2>
+
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          {Object.entries(racket.metrics).map(([key, value]) => (
-            <div key={key} className="flex flex-col items-center">
-              <div className="relative w-full h-4 bg-gray-200 rounded-full overflow-hidden mb-2">
-                <div
-                  className="absolute top-0 left-0 h-full bg-gray-600 rounded-full"
-                  style={{ width: `${value}%` }}
-                ></div>
+          {Object.entries(racket)
+            .filter(([key]) => requiredFields.includes(key))
+            .map(([key, value]) => (
+              <div key={key} className="flex flex-col items-center">
+                <div className="relative w-full h-4 bg-gray-200 rounded-full overflow-hidden mb-2">
+                  <div
+                    className="absolute top-0 left-0 h-full bg-gray-600 rounded-full"
+                    style={{ width: `${value}%` }}
+                  ></div>
+                </div>
+                <div className="flex items-baseline gap-1">
+                  <span className="font-bold text-gray-600">{value}</span>
+                  <span className="text-sm text-gray-600">/100</span>
+                </div>
+                <p className="text-center text-gray-700 capitalize mt-1">
+                  {key === "sweetSpot" ? "Sweet Spot" : key}
+                </p>
               </div>
-              <div className="flex items-baseline gap-1">
-                <span className="font-bold text-gray-600">{value}</span>
-                <span className="text-sm text-gray-600">/100</span>
-              </div>
-              <p className="text-center text-gray-700 capitalize mt-1">
-                {key === "sweetSpot" ? "Sweet Spot" : key}
-              </p>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
 
       {/* Features Section */}
       <div className="mt-12 bg-white shadow-md p-6">
         <h2 className="text-2xl font-bold text-gray-800 mb-6">Key Features</h2>
-        <ul className="space-y-3">
-          {racket.features.map((feature, index) => (
-            <li key={index} className="flex items-start">
-              <span className="text-blue-600 mr-2">✓</span>
-              <span>{feature}</span>
-            </li>
-          ))}
-        </ul>
+        <ul
+          dangerouslySetInnerHTML={{ __html: racket.KeyFeatures }}
+          className="space-y-3"
+        />
       </div>
 
       {/* Related Products (placeholder) */}
@@ -249,21 +226,20 @@ export default function RacketDetail({ params }) {
           You May Also Like
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {rackets
-            .filter((r) => r.id !== racket.id)
-            .map((relatedRacket) => (
+          {relatedRacket &&
+            relatedRacket.map((relatedRacket) => (
               <Link
-                href={`/collections/rackets/${relatedRacket.id}`}
+                href={`/collections/rackets/${relatedRacket.slug}`}
                 key={relatedRacket.id}
                 className="bg-white shadow-md p-4 text-center transition-transform transform hover:scale-105"
               >
                 <img
-                  src={relatedRacket.img}
-                  alt={relatedRacket.name}
+                  src={`${mywebsiteurl}${relatedRacket.filePath}`}
+                  alt={relatedRacket.title}
                   className="w-full h-32 object-contain mx-auto"
                 />
                 <h3 className="text-lg font-semibold mt-3">
-                  {relatedRacket.name}
+                  {relatedRacket.title}
                 </h3>
                 <p className="text-gray-600 font-bold">
                   ${relatedRacket.price}
@@ -273,7 +249,7 @@ export default function RacketDetail({ params }) {
                     <span
                       key={i}
                       className={`text-yellow-400 text-sm ${
-                        i < Math.round(relatedRacket.rating)
+                        i < Math.round(relatedRacket.ratings)
                           ? "opacity-100"
                           : "opacity-30"
                       }`}

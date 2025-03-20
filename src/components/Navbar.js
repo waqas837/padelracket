@@ -3,6 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
+import { mywebsiteurl } from "@/lib/myurl";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -39,7 +40,7 @@ const Navbar = () => {
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Link href="/" className="text-2xl font-bold">
-                <Image alt="logo" src={"/logo.png"} width={50} height={50} />
+                <img alt="logo" src={`${mywebsiteurl}/logo2.png`} width={50} height={50} />
               </Link>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8 justify-center w-full">

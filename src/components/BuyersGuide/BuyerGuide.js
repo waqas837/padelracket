@@ -8,7 +8,7 @@ const BlogCard = ({ title, subtitle, image, link, category }) => {
       className="block rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition"
     >
       <div className="relative h-60">
-        <Image
+        <img
           src={image}
           alt={title}
           layout="fill"

@@ -100,7 +100,7 @@ export async function appendPostToSitemap(post) {
 
   const sitemapEntry = `
     <url>
-      <loc>${mywebsiteurl}/guides/${post.slug}</loc>
+      <loc>${mywebsiteurl}/collections/rackets/${post.slug}</loc>
       <lastmod>${new Date(post.date_created_in).toISOString()}</lastmod>
       <changefreq>daily</changefreq>
       <priority>0.7</priority>

@@ -13,24 +13,38 @@ const Editor = dynamic(
 );
 
 export default function CreatePost() {
+  const [metaTitle, setmetaTitle] = useState("");
+  const [metaDescription, setmetaDescription] = useState("");
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
   const [keywords, setKeywords] = useState("");
   const [author, setAuthor] = useState("");
-  const [canonicalUrl, setCanonicalUrl] = useState("");
-  const [metaRobots, setMetaRobots] = useState("index, follow"); // Default value
-  const [ogTitle, setOgTitle] = useState("");
-  const [ogDescription, setOgDescription] = useState("");
-  const [ogImage, setOgImage] = useState("");
-  const [twitterTitle, setTwitterTitle] = useState("");
-  const [twitterDescription, setTwitterDescription] = useState("");
-  const [twitterImage, setTwitterImage] = useState("");
   const [readTime, setreadTime] = useState(0);
-  const [structuredData, setStructuredData] = useState("");
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [mounted, setMounted] = useState(false);
   const [file, setFile] = useState(null);
   const [loading, setloading] = useState(false);
+  // extra parameters
+  const [ratings, setratings] = useState("");
+  const [price, setprice] = useState("");
+  const [productDescription, setproductDescription] = useState("");
+  // Specifications
+  const [Year, setYear] = useState("");
+  const [Level, setLevel] = useState("");
+  const [Shape, setShape] = useState("");
+  const [Type, setType] = useState("");
+  const [forGender, setforGender] = useState("");
+  const [Face, setFace] = useState("");
+  const [Weight, setWeight] = useState("");
+  const [FrameThickness, setFrameThickness] = useState("");
+  const [Balance, setBalance] = useState("");
+  // Performance Metrics
+  const [power, setpower] = useState("");
+  const [control, setcontrol] = useState("");
+  const [rebound, setrebound] = useState("");
+  const [maneuverability, setmaneuverability] = useState("");
+  const [SweetSpot, setSweetSpo] = useState("");
+  const [amazonLink, setamazonLink] = useState("");
+  // For Key Features we use the rich text editor
 
   const [errors, setErrors] = useState({
     title: "",
@@ -55,25 +69,6 @@ export default function CreatePost() {
     };
   }, []);
   const imageMap = useRef(new Map());
-  const validateFields = () => {
-    const newErrors = {
-      title: title ? "" : "Title is required.",
-      description: description ? "" : "Description is required.",
-      canonicalUrl: canonicalUrl ? "" : "Canonical URL is required.",
-      ogTitle: ogTitle ? "" : "Open Graph title is required.",
-      ogDescription: ogDescription ? "" : "Open Graph description is required.",
-      twitterTitle: twitterTitle ? "" : "Twitter card title is required.",
-      twitterDescription: twitterDescription
-        ? ""
-        : "Twitter card description is required.",
-      structuredData: structuredData ? "" : "Structured data is required.",
-      readTime: readTime ? "" : "Structured data is required.",
-    };
-
-    setErrors(newErrors);
-
-    return Object.values(newErrors).every((error) => error === "");
-  };
 
   const onEditorStateChange = useCallback(
     (newEditorState) => {
@@ -100,31 +95,37 @@ export default function CreatePost() {
   const submitPost = async (e) => {
     e.preventDefault(); // Prevent default form submission behavior
 
-    if (!validateFields()) {
-      toast.error("Fill all fields");
-
-      return;
-    }
-
     const content = draftToHtml(convertToRaw(editorState.getCurrentContent()));
 
     const newPostData = {
+      metaTitle,
+      metaDescription,
       title,
-      description,
-      // file,
       keywords,
       author,
-      canonicalUrl,
-      metaRobots,
-      ogTitle,
-      ogDescription,
-      ogImage,
-      twitterTitle,
-      twitterDescription,
-      twitterImage,
-      structuredData,
-      content,
+      KeyFeatures: content,
       readTime,
+      // Product Details
+      ratings,
+      price,
+      productDescription,
+      // Specifications
+      Year,
+      Level,
+      Shape,
+      Type,
+      forGender,
+      Face,
+      Weight,
+      FrameThickness,
+      Balance,
+      // Performance Metrics
+      power,
+      control,
+      rebound,
+      maneuverability,
+      SweetSpot,
+      amazonLink
     };
 
     try {
@@ -143,7 +144,6 @@ export default function CreatePost() {
         method: "POST",
         body: formData,
       });
-      console.log("New post created response:", response);
       toast.dismiss();
       if (response.ok) {
         toast.success("Post Created");
@@ -160,7 +160,7 @@ export default function CreatePost() {
     <div className="p-6 max-w-3xl mx-auto bg-white rounded-lg shadow-lg">
       <Toaster />
       <h1 className="text-2xl font-bold mb-4 text-gray-800">
-        Create a New Post
+        Upload a new Racket product
       </h1>
       <form
         onSubmit={submitPost}
@@ -172,49 +172,41 @@ export default function CreatePost() {
             className="block text-gray-700 font-medium mb-1"
             htmlFor="title"
           >
-            Title
+            Post Title
           </label>
           <input
             id="title"
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Enter post title"
-            className={`w-full p-2 border ${
-              errors.title ? "border-red-500" : "border-gray-300"
-            } rounded-lg`}
+            placeholder="Enter title"
+            className="w-full p-2 border border-gray-300 rounded-lg"
           />
-          {errors.title && (
-            <p className="text-red-500 text-sm">{errors.title}</p>
-          )}
         </div>
         <div>
           <label
             className="block text-gray-700 font-medium mb-1"
-            htmlFor="description"
+            htmlFor="metaTitle"
           >
-            Meta Description
+            Meta Title
           </label>
           <input
-            id="description"
+            id="metaTitle"
             type="text"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Enter post description"
+            value={metaTitle}
+            onChange={(e) => setmetaTitle(e.target.value)}
+            placeholder="Enter meta title"
             className={`w-full p-2 border ${
-              errors.description ? "border-red-500" : "border-gray-300"
+              errors.metaTitle ? "border-red-500" : "border-gray-300"
             } rounded-lg`}
           />
-          {errors.description && (
-            <p className="text-red-500 text-sm">{errors.description}</p>
-          )}
         </div>
         <div>
           <label
             className="block text-gray-700 font-medium mb-1"
             htmlFor="file"
           >
-            Any File Upload
+            Racket image/featured image
           </label>
           <input
             id="file"
@@ -227,230 +219,209 @@ export default function CreatePost() {
         <div>
           <label
             className="block text-gray-700 font-medium mb-1"
-            htmlFor="keywords"
+            htmlFor="metaTitle"
           >
-            Keywords
+            Amazon Link
           </label>
           <input
-            id="keywords"
+            id="metaTitle"
             type="text"
-            value={keywords}
-            onChange={(e) => setKeywords(e.target.value)}
-            placeholder="Enter post keywords"
-            className="w-full p-2 border border-gray-300 rounded-lg"
-          />
-        </div>
-        <div>
-          <label
-            className="block text-gray-700 font-medium mb-1"
-            htmlFor="author"
-          >
-            Author
-          </label>
-          <input
-            id="author"
-            type="text"
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
-            placeholder="Enter author's name"
-            className="w-full p-2 border border-gray-300 rounded-lg"
-          />
-        </div>
-        <div>
-          <label
-            className="block text-gray-700 font-medium mb-1"
-            htmlFor="canonicalUrl"
-          >
-            Canonical URL
-          </label>
-          <input
-            id="canonicalUrl"
-            type="text"
-            value={canonicalUrl}
-            onChange={(e) => setCanonicalUrl(e.target.value)}
-            placeholder="Enter canonical URL"
+            value={amazonLink}
+            onChange={(e) => setamazonLink(e.target.value)}
+            placeholder="Enter Amazon Link"
             className={`w-full p-2 border ${
-              errors.canonicalUrl ? "border-red-500" : "border-gray-300"
+              errors.metaTitle ? "border-red-500" : "border-gray-300"
             } rounded-lg`}
           />
-          {errors.canonicalUrl && (
-            <p className="text-red-500 text-sm">{errors.canonicalUrl}</p>
-          )}
         </div>
         <div>
-          <label
-            className="block text-gray-700 font-medium mb-1"
-            htmlFor="metaRobots"
-          >
-            Meta Robots
-          </label>
-          <input
-            id="metaRobots"
-            type="text"
-            value={metaRobots}
-            onChange={(e) => setMetaRobots(e.target.value)}
-            placeholder="Meta robots directives (e.g., index, follow)"
-            className="w-full p-2 border border-gray-300 rounded-lg"
-          />
-        </div>
-        <div>
-          <label
-            className="block text-gray-700 font-medium mb-1"
-            htmlFor="ogTitle"
-          >
-            Open Graph Title
-          </label>
-          <input
-            id="ogTitle"
-            type="text"
-            value={ogTitle}
-            onChange={(e) => setOgTitle(e.target.value)}
-            placeholder="Open Graph title"
-            className={`w-full p-2 border ${
-              errors.ogTitle ? "border-red-500" : "border-gray-300"
-            } rounded-lg`}
-          />
-          {errors.ogTitle && (
-            <p className="text-red-500 text-sm">{errors.ogTitle}</p>
-          )}
-        </div>
-        <div>
-          <label
-            className="block text-gray-700 font-medium mb-1"
-            htmlFor="ogDescription"
-          >
-            Open Graph Description
-          </label>
-          <input
-            id="ogDescription"
-            type="text"
-            value={ogDescription}
-            onChange={(e) => setOgDescription(e.target.value)}
-            placeholder="Open Graph description"
-            className={`w-full p-2 border ${
-              errors.ogDescription ? "border-red-500" : "border-gray-300"
-            } rounded-lg`}
-          />
-          {errors.ogDescription && (
-            <p className="text-red-500 text-sm">{errors.ogDescription}</p>
-          )}
-        </div>
-        <div>
-          <label
-            className="block text-gray-700 font-medium mb-1"
-            htmlFor="ogImage"
-          >
-            Open Graph Image URL
-          </label>
-          <input
-            id="ogImage"
-            type="text"
-            value={ogImage}
-            onChange={(e) => setOgImage(e.target.value)}
-            placeholder="Open Graph image URL"
-            className="w-full p-2 border border-gray-300 rounded-lg"
-          />
-        </div>
-        <div>
-          <label
-            className="block text-gray-700 font-medium mb-1"
-            htmlFor="twitterTitle"
-          >
-            Twitter Title
-          </label>
-          <input
-            id="twitterTitle"
-            type="text"
-            value={twitterTitle}
-            onChange={(e) => setTwitterTitle(e.target.value)}
-            placeholder="Twitter card title"
-            className={`w-full p-2 border ${
-              errors.twitterTitle ? "border-red-500" : "border-gray-300"
-            } rounded-lg`}
-          />
-          {errors.twitterTitle && (
-            <p className="text-red-500 text-sm">{errors.twitterTitle}</p>
-          )}
-        </div>
-        <div>
-          <label
-            className="block text-gray-700 font-medium mb-1"
-            htmlFor="readTime"
-          >
-            Read TIME{" "}
-          </label>
-          <input
-            id="readTime"
-            type="number"
-            value={readTime}
-            onChange={(e) => setreadTime(e.target.value)}
-            placeholder="in mins"
-            className="w-full p-2 border border-gray-300 rounded-lg"
-          />
-        </div>
-        <div>
-          <label
-            className="block text-gray-700 font-medium mb-1"
-            htmlFor="twitterDescription"
-          >
-            Twitter Description
-          </label>
-          <input
-            id="twitterDescription"
-            type="text"
-            value={twitterDescription}
-            onChange={(e) => setTwitterDescription(e.target.value)}
-            placeholder="Twitter card description"
-            className={`w-full p-2 border ${
-              errors.twitterDescription ? "border-red-500" : "border-gray-300"
-            } rounded-lg`}
-          />
-          {errors.twitterDescription && (
-            <p className="text-red-500 text-sm">{errors.twitterDescription}</p>
-          )}
-        </div>
-        <div>
-          <label
-            className="block text-gray-700 font-medium mb-1"
-            htmlFor="twitterImage"
-          >
-            Twitter Image URL
-          </label>
-          <input
-            id="twitterImage"
-            type="text"
-            value={twitterImage}
-            onChange={(e) => setTwitterImage(e.target.value)}
-            placeholder="Twitter card image URL"
-            className="w-full p-2 border border-gray-300 rounded-lg"
-          />
-        </div>
-        <div>
-          <label
-            className="block text-gray-700 font-medium mb-1"
-            htmlFor="structuredData"
-          >
-            Structured Data (JSON-LD)
-          </label>
-          <textarea
-            id="structuredData"
-            value={structuredData}
-            onChange={(e) => setStructuredData(e.target.value)}
-            placeholder="Enter structured data in JSON-LD format"
-            rows="4"
-            className={`w-full p-2 border ${
-              errors.structuredData ? "border-red-500" : "border-gray-300"
-            } rounded-lg`}
-          />
-          {errors.structuredData && (
-            <p className="text-red-500 text-sm">{errors.structuredData}</p>
-          )}
+          <div>
+            <label
+              className="block text-gray-700 font-medium mb-1"
+              htmlFor="metaDescription"
+            >
+              Meta Description
+            </label>
+            <textarea
+              id="metaDescription"
+              value={metaDescription}
+              onChange={(e) => setmetaDescription(e.target.value)}
+              placeholder="Enter meta description"
+              className="w-full p-2 border border-gray-300 rounded-lg"
+            ></textarea>
+          </div>
+
+          <div>
+            <label
+              className="block text-gray-700 font-medium mb-1"
+              htmlFor="keywords"
+            >
+              Keywords
+            </label>
+            <input
+              id="keywords"
+              type="text"
+              value={keywords}
+              onChange={(e) => setKeywords(e.target.value)}
+              placeholder="Enter keywords"
+              className="w-full p-2 border border-gray-300 rounded-lg"
+            />
+          </div>
+
+          <div>
+            <label
+              className="block text-gray-700 font-medium mb-1"
+              htmlFor="author"
+            >
+              Author
+            </label>
+            <input
+              id="author"
+              type="text"
+              value={author}
+              onChange={(e) => setAuthor(e.target.value)}
+              placeholder="Enter author name"
+              className="w-full p-2 border border-gray-300 rounded-lg"
+            />
+          </div>
+
+          <div>
+            <label
+              className="block text-gray-700 font-medium mb-1"
+              htmlFor="readTime"
+            >
+              Read Time
+            </label>
+            <input
+              id="readTime"
+              type="number"
+              value={readTime}
+              onChange={(e) => setreadTime(e.target.value)}
+              placeholder="Enter read time (minutes)"
+              className="w-full p-2 border border-gray-300 rounded-lg"
+            />
+          </div>
+
+          {/* Extra Parameters */}
+          <div>
+            <label
+              className="block text-gray-700 font-medium mb-1"
+              htmlFor="ratings"
+            >
+              Ratings
+            </label>
+            <input
+              id="ratings"
+              type="text"
+              value={ratings}
+              onChange={(e) => setratings(e.target.value)}
+              placeholder="Enter ratings"
+              className="w-full p-2 border border-gray-300 rounded-lg"
+            />
+          </div>
+
+          <div>
+            <label
+              className="block text-gray-700 font-medium mb-1"
+              htmlFor="price"
+            >
+              Price
+            </label>
+            <input
+              id="price"
+              type="text"
+              value={price}
+              onChange={(e) => setprice(e.target.value)}
+              placeholder="Enter price"
+              className="w-full p-2 border border-gray-300 rounded-lg"
+            />
+          </div>
+
+          <div>
+            <label
+              className="block text-gray-700 font-medium mb-1"
+              htmlFor="productDescription"
+            >
+              Product Description
+            </label>
+            <textarea
+              id="productDescription"
+              value={productDescription}
+              onChange={(e) => setproductDescription(e.target.value)}
+              placeholder="Enter product description"
+              className="w-full p-2 border border-gray-300 rounded-lg"
+            ></textarea>
+          </div>
+
+          {/* Specifications */}
+          {[
+            { label: "Year", state: Year, setState: setYear },
+            { label: "Level", state: Level, setState: setLevel },
+            { label: "Shape", state: Shape, setState: setShape },
+            { label: "Type", state: Type, setState: setType },
+            { label: "For Gender", state: forGender, setState: setforGender },
+            { label: "Face", state: Face, setState: setFace },
+            { label: "Weight", state: Weight, setState: setWeight },
+            {
+              label: "Frame Thickness",
+              state: FrameThickness,
+              setState: setFrameThickness,
+            },
+            { label: "Balance", state: Balance, setState: setBalance },
+          ].map(({ label, state, setState }) => (
+            <div key={label}>
+              <label
+                className="block text-gray-700 font-medium mb-1"
+                htmlFor={label}
+              >
+                {label}
+              </label>
+              <input
+                id={label}
+                type="text"
+                value={state}
+                onChange={(e) => setState(e.target.value)}
+                placeholder={`Enter ${label}`}
+                className="w-full p-2 border border-gray-300 rounded-lg"
+              />
+            </div>
+          ))}
+
+          {/* Performance Metrics */}
+          {[
+            { label: "Power", state: power, setState: setpower },
+            { label: "Control", state: control, setState: setcontrol },
+            { label: "Rebound", state: rebound, setState: setrebound },
+            {
+              label: "Maneuverability",
+              state: maneuverability,
+              setState: setmaneuverability,
+            },
+            { label: "Sweet Spot", state: SweetSpot, setState: setSweetSpo },
+          ].map(({ label, state, setState }) => (
+            <div key={label}>
+              <label
+                className="block text-gray-700 font-medium mb-1"
+                htmlFor={label}
+              >
+                {label}
+              </label>
+              <input
+                id={label}
+                type="number"
+                value={state}
+                onChange={(e) => setState(e.target.value)}
+                placeholder={`Enter ${label}`}
+                className="w-full p-2 border border-gray-300 rounded-lg"
+              />
+            </div>
+          ))}
         </div>
 
         {mounted && (
           <div>
             <label className="block text-gray-700 font-medium mb-1">
-              Content
+              Key Features
             </label>
             <Editor
               editorState={editorState}
@@ -527,53 +498,6 @@ export default function CreatePost() {
           {loading ? "..." : "Submit Post"}
         </button>
       </form>
-
-      <div className="mt-6 p-4 bg-gray-100 rounded-lg border border-gray-300">
-        <h2 className="text-xl font-semibold mb-2 text-gray-800">
-          Meta Tags Preview
-        </h2>
-        <p className="text-gray-700">
-          Here is how your meta tags will look in the HTML &lt;head&gt;:
-        </p>
-        <pre className="bg-gray-200 p-4 rounded-lg overflow-x-auto">
-          {`<meta name="description" content="${description
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")}">
-<meta name="keywords" content="${keywords
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")}">
-<meta name="author" content="${author
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")}">
-<link rel="canonical" href="${canonicalUrl
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")}">
-<meta name="robots" content="${metaRobots
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")}">
-<meta property="og:title" content="${ogTitle
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")}">
-<meta property="og:description" content="${ogDescription
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")}">
-<meta property="og:image" content="${ogImage
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")}">
-<meta name="twitter:title" content="${twitterTitle
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")}">
-<meta name="twitter:description" content="${twitterDescription
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")}">
-<meta name="twitter:image" content="${twitterImage
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")}">
-<script type="application/ld+json">
-${structuredData.replace(/</g, "&lt;").replace(/>/g, "&gt;")}
-</script>`}
-        </pre>
-      </div>
     </div>
   );
 }

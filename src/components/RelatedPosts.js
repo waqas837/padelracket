@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 import pool from "@/lib/db";
+import { mywebsiteurl } from "@/lib/myurl";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -28,7 +29,6 @@ export const metadata = {
   // canonical: "https://webcamtest.live/canonical-url",
 };
 
-
 const RelatedPosts = async ({ IamNOtInclude }) => {
   async function fetchAllPosts() {
     let connection = await pool.getConnection();
@@ -55,9 +55,9 @@ const RelatedPosts = async ({ IamNOtInclude }) => {
                 <div key={index}>
                   <article className="max-w-xs">
                     <Link href={`/guides/${val.slug}`}>
-                      <Image
-                        alt="later on"
-                        src={val.filePath}
+                      <img
+                        alt={val.title}
+                        src={`${mywebsiteurl}${val.filePath}`}
                         width={300}
                         height={300}
                         className="mb-5 rounded-lg"
